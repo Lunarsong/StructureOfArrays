@@ -1,0 +1,53 @@
+#include <iostream>
+#include <string>
+
+#include "soa.h"
+
+void print_soa_iis(const SoA<int, std::string, int>& soa_iis) {
+  for (int i = 0; i < soa_iis.size(); ++i) {
+    std::cout << "(" << i << "): " << soa_iis.get<int, 0>(i) << ", "  << soa_iis.get<std::string, 1>(i)
+              << ", " << soa_iis.get<int, 2>(i) << std::endl;
+  }
+}
+
+int main() {
+  SoA<int, std::string, int> soa_iis;
+  std::cout << "size: " << soa_iis.size() << std::endl;
+  std::cout << "empty: " << soa_iis.empty() << std::endl;
+
+  soa_iis.push_back(0, "Hi", 2);
+  soa_iis.push_back(22, "Kitty", 4);
+
+  std::cout << "size: " << soa_iis.size() << std::endl;
+  std::cout << "empty: " << soa_iis.empty() << std::endl;
+  std::cout << std::endl;
+
+  // Iterate the arrays and print out the elements.
+  std::cout << "Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << std::endl;
+
+  // Modify an element
+  soa_iis.get<std::string, 1>(0) = "I am changed!";
+  std::cout << "Modified the 0th element. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << std::endl;
+
+  // Erase an element.
+  soa_iis.erase(0);
+  std::cout << "Erased 0th element. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << std::endl;
+
+  // Add two new elements...
+  soa_iis.push_back(1, "Hi... for now...", 5);
+  soa_iis.push_back(80, "I'll survive!'", 20);
+  std::cout << "Added 2 new elements. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << std::endl;
+
+  // And erase the first two.
+  soa_iis.erase(0, 2);
+  std::cout << "Erased first 2 elements. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+}
