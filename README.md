@@ -104,3 +104,15 @@ Erase first two elements:
 ```
 particles.erase(0, 2);
 ```
+
+### Accessing arrays
+Sometimes you may want to access the raw arrays. To do so, use the *array* function.
+
+```
+vec3* positions = particles.array<vec3, 0>();
+vec3* velocities = particles.array<vec3, 1>();
+
+for (int i = 0; i < particles.size(); ++i) {
+  positions[i] += velocities[i] * delta_time;
+}
+```

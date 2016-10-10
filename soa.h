@@ -148,6 +148,24 @@ class SoA {
     size_ = size;
   }
 
+  // Returns a pointer to the |ArrayIndex|th array.
+  template <typename ElementType, std::size_t ArrayIndex>
+  ElementType* array() {
+    ElementType* element_pointer = reinterpret_cast<ElementType*>(
+        &(arrays_[ArrayIndex][0]));
+
+    return element_pointer;
+  }
+
+  // Returns a const pointer to the |ArrayIndex|th array.
+  template <typename ElementType, std::size_t ArrayIndex>
+  const ElementType* array() const {
+    const ElementType* element_pointer = reinterpret_cast<const ElementType*>(
+        &(arrays_[ArrayIndex][0]));
+
+    return element_pointer;
+  }
+
   // Returns a reference to the |index|th element from the |ArrayIndex|th array
   // as type |ElementType|.
   template <typename ElementType, std::size_t ArrayIndex>
@@ -184,7 +202,7 @@ class SoA {
         reinterpret_cast<Type*>(&arrays_[index][size_ * sizeof(Type)]);
 
     // Perfect forwarding without any copies.
-    *array_data_pointer = std::move(element);
+    new (array_data_pointer) Type(std::forward<Type>(element));
 
     ++index;
   }

@@ -79,4 +79,16 @@ int main() {
   std::cout << "size: " << soa_iis.size() << std::endl;
   std::cout << "empty: " << soa_iis.empty() << std::endl;
   std::cout << std::endl;
+
+  // Get arrays and print them.
+  std::cout << "Printing arrays individually:\n";
+  int* ints0 = soa_iis.array<int, 0>();
+  std::string* strings = soa_iis.array<std::string, 1>();
+  int* ints1 = soa_iis.array<int, 2>();
+  for (int i = 0; i < soa_iis.size(); ++ i) {
+    std::cout << "Index: " << i << ": ";
+    std::cout << ints0[i] << ", ";
+    std::cout << strings[i] << ", ";
+    std::cout << ints1[i] << std::endl;
+  }
 }
