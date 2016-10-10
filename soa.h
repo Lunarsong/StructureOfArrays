@@ -26,8 +26,18 @@ class SoA {
   // Returns |true| if there are no elements in the arrays, |false| otherwise.
   bool empty() const { return (size_ == 0); }
 
-  // Adds an element to the end of the arrays.
-  void push_back(Elements... elements) {
+  // Adds an element to the end of the arrays via rvalue.
+  void push_back(Elements&&... elements) {
+    size_t index = 0;
+    int dummy[] = {(push_back(std::forward<Elements>(elements), index), 0)...};
+    (void)dummy;
+
+    // Increment number of elements in the arrays.
+    ++size_;
+  }
+
+  // Adds an element to the end of the arrays, as a copy of the const ref value.
+  void push_back(const Elements&... elements) {
     size_t index = 0;
     int dummy[] = {(push_back(elements, index), 0)...};
     (void)dummy;
@@ -45,8 +55,17 @@ class SoA {
 
   // Erases elements of a given index from the arrays.
   void erase(size_t element_index) {
+    size_t array = 0;
+
+    // Need to explicitly call the destructor for elements removed.
+    int dummy[] = {
+        ((((Elements*)&arrays_[array++][element_index * sizeof(Elements)])
+              ->~Elements()),
+         0)...};
+    (void)dummy;
+
     const size_t num_arrays = arrays_.size();
-    for (size_t array = 0; array < num_arrays; ++array) {
+    for (array = 0; array < num_arrays; ++array) {
       const size_t data_type_size = sizeofs_[array];
       arrays_[array].erase(
           arrays_[array].begin() + data_type_size * element_index,
@@ -57,15 +76,28 @@ class SoA {
     --size_;
   }
 
-  // Erases |num_elements| elements from |element_index| from the arrays.
-  void erase(size_t element_index, size_t num_elements) {
+  // Erases |num_elements| elements from |start_index| from the arrays.
+  void erase(size_t start_index, size_t num_elements) {
+    size_t array = 0;
+
+    // Need to explicitly call the destructor for elements removed.
+    const size_t end_iterator = start_index + num_elements;
+    for (size_t i = start_index; i < end_iterator; ++i) {
+      array = 0;
+      int dummy[] = {
+          ((((Elements*)&arrays_[array++][i * sizeof(Elements)])->~Elements()),
+           0)...};
+      (void)dummy;
+    }
+    std::cout << "Hello 2\n" << std::flush;
+
     const size_t num_arrays = arrays_.size();
-    for (size_t array = 0; array < num_arrays; ++array) {
+    for (array = 0; array < num_arrays; ++array) {
       const size_t data_type_size = sizeofs_[array];
       arrays_[array].erase(
-          arrays_[array].begin() + data_type_size * element_index,
+          arrays_[array].begin() + data_type_size * start_index,
           arrays_[array].begin() +
-              data_type_size * (element_index + num_elements));
+              data_type_size * (start_index + num_elements));
     }
 
     // Decrement number of elements in the arrays.
@@ -95,10 +127,23 @@ class SoA {
 
   // Resizes the arrays to contain |size| elements;
   void resize(size_t size) {
-    // Resize arrays. Dummy does pack expansion via list-initialization.
-    size_t index = 0;
-    int dummy[] = {(arrays_[index++].resize(sizeof(Elements) * size), 0)...};
-    (void)dummy;
+    if (size < size_) {
+      erase(size, size_ - size);
+    } else if (size > size_) {
+      // Resize arrays. Dummy does pack expansion via list-initialization.
+      size_t array = 0;
+      int dummy[] = {(arrays_[array++].resize(sizeof(Elements) * size), 0)...};
+      (void)dummy;
+
+      // Call placement constructor on newly made elements.
+      for (size_t i = size_; i < size; ++i) {
+        array = 0;
+        int dummy_construct[] = {(
+            new ((Elements*)&arrays_[array++][i * sizeof(Elements)]) Elements(),
+            0)...};
+        (void)dummy_construct;
+      }
+    }
 
     size_ = size;
   }
@@ -132,12 +177,27 @@ class SoA {
   std::vector<size_t> sizeofs_;
 
   template <class Type>
+  void push_back(Type&& element, size_t& index) {
+    arrays_[index].resize(arrays_[index].size() + sizeof(Type));
+
+    Type* array_data_pointer =
+        reinterpret_cast<Type*>(&arrays_[index][size_ * sizeof(Type)]);
+
+    // Perfect forwarding without any copies.
+    *array_data_pointer = std::move(element);
+
+    ++index;
+  }
+
+  template <class Type>
   void push_back(const Type& element, size_t& index) {
     arrays_[index].resize(arrays_[index].size() + sizeof(Type));
 
     Type* array_data_pointer =
         reinterpret_cast<Type*>(&arrays_[index][size_ * sizeof(Type)]);
-    *array_data_pointer = element;
+
+    // Placement constructor needed here.
+    new (array_data_pointer) Type(element);
 
     ++index;
   }

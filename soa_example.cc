@@ -5,8 +5,9 @@
 
 void print_soa_iis(const SoA<int, std::string, int>& soa_iis) {
   for (int i = 0; i < soa_iis.size(); ++i) {
-    std::cout << "(" << i << "): " << soa_iis.get<int, 0>(i) << ", "  << soa_iis.get<std::string, 1>(i)
-              << ", " << soa_iis.get<int, 2>(i) << std::endl;
+    std::cout << "(" << i << "): " << soa_iis.get<int, 0>(i) << ", "
+              << soa_iis.get<std::string, 1>(i) << ", "
+              << soa_iis.get<int, 2>(i) << std::endl;
   }
 }
 
@@ -50,4 +51,32 @@ int main() {
   soa_iis.erase(0, 2);
   std::cout << "Erased first 2 elements. Arrays now contain:\n";
   print_soa_iis(soa_iis);
+
+  // Kill the arrays via resize.
+  soa_iis.resize(0);
+  std::cout << "Resized to 0. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << "size: " << soa_iis.size() << std::endl;
+  std::cout << "empty: " << soa_iis.empty() << std::endl;
+  std::cout << std::endl;
+
+  // Resize to have some new elements.
+  soa_iis.resize(5);
+  std::cout << "Resized to 5. Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << "size: " << soa_iis.size() << std::endl;
+  std::cout << "empty: " << soa_iis.empty() << std::endl;
+  std::cout << std::endl;
+
+  // Modify an element and insert an element.
+  soa_iis.get<std::string, 1>(3) = "Oh hai!";
+  soa_iis.get<int, 2>(3) = 11;
+  soa_iis.get<int, 0>(3) = 22;
+  soa_iis.push_back(100, "I'm new!.", 20);
+  std::cout
+      << "Modified the 4th element and added a new one. Arrays now contain:\n";
+      print_soa_iis(soa_iis);
+  std::cout << "size: " << soa_iis.size() << std::endl;
+  std::cout << "empty: " << soa_iis.empty() << std::endl;
+  std::cout << std::endl;
 }
