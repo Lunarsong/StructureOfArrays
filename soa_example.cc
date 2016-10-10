@@ -3,7 +3,7 @@
 
 #include "soa.h"
 
-void print_soa_iis(const SoA<int, std::string, int>& soa_iis) {
+void print_soa_iis(const SoA<int, std::string, int> &soa_iis) {
   for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "(" << i << "): " << soa_iis.get<int, 0>(i) << ", "
               << soa_iis.get<std::string, 1>(i) << ", "
@@ -16,8 +16,8 @@ int main() {
   std::cout << "size: " << soa_iis.size() << std::endl;
   std::cout << "empty: " << soa_iis.empty() << std::endl;
 
-  soa_iis.push_back(0, "Hi", 2);
   soa_iis.push_back(22, "Kitty", 4);
+  soa_iis.push_back(0, "Hi", 2);
 
   std::cout << "size: " << soa_iis.size() << std::endl;
   std::cout << "empty: " << soa_iis.empty() << std::endl;
@@ -25,6 +25,12 @@ int main() {
 
   // Iterate the arrays and print out the elements.
   std::cout << "Arrays now contain:\n";
+  print_soa_iis(soa_iis);
+  std::cout << std::endl;
+
+  // Swap the elements.
+  soa_iis.swap(0, 1);
+  std::cout << "Swapped first two elements. Arrays now contain:\n";
   print_soa_iis(soa_iis);
   std::cout << std::endl;
 
@@ -75,17 +81,17 @@ int main() {
   soa_iis.push_back(100, "I'm new!.", 20);
   std::cout
       << "Modified the 4th element and added a new one. Arrays now contain:\n";
-      print_soa_iis(soa_iis);
+  print_soa_iis(soa_iis);
   std::cout << "size: " << soa_iis.size() << std::endl;
   std::cout << "empty: " << soa_iis.empty() << std::endl;
   std::cout << std::endl;
 
   // Get arrays and print them.
   std::cout << "Printing arrays individually:\n";
-  int* ints0 = soa_iis.array<int, 0>();
-  std::string* strings = soa_iis.array<std::string, 1>();
-  int* ints1 = soa_iis.array<int, 2>();
-  for (int i = 0; i < soa_iis.size(); ++ i) {
+  int *ints0 = soa_iis.array<int, 0>();
+  std::string *strings = soa_iis.array<std::string, 1>();
+  int *ints1 = soa_iis.array<int, 2>();
+  for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "Index: " << i << ": ";
     std::cout << ints0[i] << ", ";
     std::cout << strings[i] << ", ";
