@@ -114,7 +114,7 @@ class SoA {
     std::vector<ElementType> *array =
         reinterpret_cast<std::vector<ElementType> *>(arrays_[ArrayIndex]);
 
-    return &(*array)[0];
+    return array->data();
   }
 
   // Returns a const pointer to the |ArrayIndex|th array.
@@ -123,7 +123,7 @@ class SoA {
     std::vector<ElementType> *array =
         reinterpret_cast<std::vector<ElementType> *>(arrays_[ArrayIndex]);
 
-    return &(*array)[0];
+    return array->data();
   }
 
   // Returns a reference to the |index|th element from the |ArrayIndex|th array
