@@ -26,6 +26,8 @@ public:
                         arrays_[array_index++]),
                     0)...};
     (void)dummy;
+
+    arrays_.clear();
   }
 
   // Returns the number of elements in the arrays.
