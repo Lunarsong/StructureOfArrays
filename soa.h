@@ -6,18 +6,16 @@
 // http://en.cppreference.com/w/cpp/language/parameter_pack
 
 // Structure of Arrays.
-template <typename... Elements> class SoA {
-public:
+template <typename... Elements>
+class SoA {
+ public:
   SoA() {
-    const size_t num_types = sizeof...(Elements);
-    arrays_.resize(num_types);
-
     size_t array_index = 0;
     int dummy_init[] = {
         (arrays_[array_index++] =
              reinterpret_cast<std::vector<char> *>(new std::vector<Elements>()),
          0)...};
-    (void)dummy_init; // avoids unused variable compiler warnings.
+    (void)dummy_init;  // avoids unused variable compiler warnings.
   }
 
   virtual ~SoA() {
@@ -26,8 +24,6 @@ public:
                         arrays_[array_index++]),
                     0)...};
     (void)dummy;
-
-    arrays_.clear();
   }
 
   // Returns the number of elements in the arrays.
@@ -113,7 +109,8 @@ public:
   }
 
   // Returns a pointer to the |ArrayIndex|th array.
-  template <typename ElementType, std::size_t ArrayIndex> ElementType *array() {
+  template <typename ElementType, std::size_t ArrayIndex>
+  ElementType *array() {
     std::vector<ElementType> *array =
         reinterpret_cast<std::vector<ElementType> *>(arrays_[ArrayIndex]);
 
@@ -150,13 +147,14 @@ public:
   }
 
   // Returns the number of arrays.
-  size_t num_arrays() const { return arrays_.size(); }
+  size_t num_arrays() const { return sizeof...(Elements); }
 
-private:
+ private:
   size_t size_ = 0;
-  std::vector<std::vector<char> *> arrays_;
+  std::vector<char> *arrays_[sizeof...(Elements)];
 
-  template <class Type> void push_back_impl(Type &&element, size_t &index) {
+  template <class Type>
+  void push_back_impl(Type &&element, size_t &index) {
     std::vector<Type> *array =
         reinterpret_cast<std::vector<Type> *>(arrays_[index]);
 
@@ -175,7 +173,8 @@ private:
     ++array_index;
   }
 
-  template <class Type> void pop_back_impl(size_t &array_index) {
+  template <class Type>
+  void pop_back_impl(size_t &array_index) {
     std::vector<Type> *array =
         reinterpret_cast<std::vector<Type> *>(arrays_[array_index]);
 
@@ -216,7 +215,8 @@ private:
     ++array_index;
   }
 
-  template <class Type> void reserve_impl(size_t size, size_t &array_index) {
+  template <class Type>
+  void reserve_impl(size_t size, size_t &array_index) {
     std::vector<Type> *array =
         reinterpret_cast<std::vector<Type> *>(arrays_[array_index]);
 
@@ -225,7 +225,8 @@ private:
     ++array_index;
   }
 
-  template <class Type> void resize_impl(size_t size, size_t &array_index) {
+  template <class Type>
+  void resize_impl(size_t size, size_t &array_index) {
     std::vector<Type> *array =
         reinterpret_cast<std::vector<Type> *>(arrays_[array_index]);
 
