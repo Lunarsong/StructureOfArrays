@@ -14,7 +14,7 @@ struct Particle {
   vec3 direction;
   float mass;
   vec3 aabb_min;
-  vec3 aabb_ax;
+  vec3 aabb_max;
 };
 Particle particles[1024];
 ```
@@ -110,7 +110,7 @@ Sometimes you may want to access the raw arrays. To do so, use the *array* funct
 
 ```
 vec3* positions = particles.array<vec3, 0>();
-vec3* velocities = particles.array<vec3, 1>();
+const vec3* velocities = particles.array<vec3, 1>();
 
 for (int i = 0; i < particles.size(); ++i) {
   positions[i] += velocities[i] * delta_time;
