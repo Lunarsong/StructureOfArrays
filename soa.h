@@ -2,6 +2,7 @@
 
 #include <vector>
 
+
 // This class makes heavy use of template parameter pack.
 // http://en.cppreference.com/w/cpp/language/parameter_pack
 
@@ -18,7 +19,11 @@ class SoA {
     (void)dummy;  // avoids unused variable compiler warnings.
   }
 
-  virtual ~SoA() = default;
+  virtual ~SoA() {
+    if (!empty()) {
+      erase(0, size());
+    }
+  }
 
   // Returns the number of elements in the arrays.
   size_t size() const { return size_; }
