@@ -12,8 +12,8 @@ class SoA {
   SoA() {
     size_t array_index = 0;
     int dummy_init[] = {
-        (arrays_[array_index++] =
-             reinterpret_cast<std::vector<char> *>(new std::vector<Elements>()),
+        (arrays_[array_index++] = reinterpret_cast<std::vector<void *> *>(
+             new std::vector<Elements>()),
          0)...};
     (void)dummy_init;  // avoids unused variable compiler warnings.
   }
@@ -151,7 +151,7 @@ class SoA {
 
  private:
   size_t size_ = 0;
-  std::vector<char> *arrays_[sizeof...(Elements)];
+  std::vector<void *> *arrays_[sizeof...(Elements)];
 
   template <class Type>
   void push_back_impl(Type &&element, size_t &index) {
