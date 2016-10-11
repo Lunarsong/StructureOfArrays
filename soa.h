@@ -210,7 +210,8 @@ class SoA {
     std::vector<Type> *array =
         reinterpret_cast<std::vector<Type> *>(arrays_[array_index]);
 
-    std::swap((*array)[index0], (*array)[index1]);
+    using std::swap;
+    swap((*array)[index0], (*array)[index1]);
 
     ++array_index;
   }
