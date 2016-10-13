@@ -4,7 +4,7 @@ Structure of Arrays (SoA) template in C++.
 # Description
 The template simplifies creating structures of arrays.
 
-## Brief explaination about struectres of arrays and arrays of structures.
+## Brief explaination about structures of arrays and arrays of structures.
 Structure of Arrays are often used to improve cache efficacy over arrays of structs, for example:
 
 ```
