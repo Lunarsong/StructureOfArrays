@@ -17,7 +17,7 @@
 template <typename... Elements> class SoA {
 public:
   // Helper to deduce the type of the Nth element.
-  template <int N, typename... Ts>
+  template <size_t N>
   using NthTypeOf =
       typename std::tuple_element<N, std::tuple<Elements...>>::type;
 
@@ -99,9 +99,13 @@ public:
 
   // Swaps two elements inside the array.
   void swap(size_t index0, size_t index1) {
-    if (index0 >= size() || index1 > size()) {
+    if (index0 >= size() || index1 >= size()) {
       assert(false);
 
+      return;
+    }
+
+    if (index0 == index1) {
       return;
     }
 
@@ -122,10 +126,10 @@ public:
 
   // Returns a pointer to the |ArrayIndex|th array.
   template <std::size_t ArrayIndex>
-  NthTypeOf<ArrayIndex, Elements...> *array() {
+  NthTypeOf<ArrayIndex> *array() {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
-    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
+    using ElementType = NthTypeOf<ArrayIndex>;
     std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
 
     return array->data();
@@ -133,21 +137,21 @@ public:
 
   // Returns a const pointer to the |ArrayIndex|th array.
   template <std::size_t ArrayIndex>
-  const NthTypeOf<ArrayIndex, Elements...> *array() const {
+  const NthTypeOf<ArrayIndex> *array() const {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
-    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
+    using ElementType = NthTypeOf<ArrayIndex>;
     const std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
 
     return array->data();
   }
 
   template <std::size_t ArrayIndex>
-  NthTypeOf<ArrayIndex, Elements...> &get(size_t index) {
+  NthTypeOf<ArrayIndex> &get(size_t index) {
     static_assert(ArrayIndex < kNumArrays,
                   "Requested invalid array index in get().");
 
-    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
+    using ElementType = NthTypeOf<ArrayIndex>;
     std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
 
     return (*array)[index];
@@ -156,11 +160,11 @@ public:
   // Returns a const reference to the |index|th element from the |ArrayIndex|th
   // array as type |ElementType|.
   template <typename std::size_t ArrayIndex>
-  const NthTypeOf<ArrayIndex, Elements...> &get(size_t index) const {
+  const NthTypeOf<ArrayIndex> &get(size_t index) const {
     static_assert(ArrayIndex < kNumArrays,
                   "Requested invalid array index in get().");
 
-    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
+    using ElementType = NthTypeOf<ArrayIndex>;
     const std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
 
     return (*array)[index];
