@@ -7,22 +7,26 @@
 // This class makes heavy use of template parameter pack.
 // http://en.cppreference.com/w/cpp/language/parameter_pack
 
-#define FOR_EACH_ARRAY(expression)                                          \
-  size_t array_index = 0;                                                   \
-  int dummy[] = {                                                           \
-      (get_array<Elements>(array_index)->expression, ++array_index, 0)...}; \
+#define FOR_EACH_ARRAY(expression)                                             \
+  size_t array_index = 0;                                                      \
+  int dummy[] = {                                                              \
+      (get_array<Elements>(array_index)->expression, ++array_index, 0)...};    \
   (void)dummy
 
 // Structure of Arrays.
-template <typename... Elements>
-class SoA {
- public:
+template <typename... Elements> class SoA {
+public:
+  // Helper to deduce the type of the Nth element.
+  template <int N, typename... Ts>
+  using NthTypeOf =
+      typename std::tuple_element<N, std::tuple<Elements...>>::type;
+
   SoA() {
     size_t array_index = 0;
     int dummy_init[] = {(new (get_array<Elements>(array_index))
                              std::vector<Elements>(),
                          ++array_index, 0)...};
-    (void)dummy_init;  // avoids unused variable compiler warnings.
+    (void)dummy_init; // avoids unused variable compiler warnings.
   }
 
   virtual ~SoA() { FOR_EACH_ARRAY(~vector<Elements>()); }
@@ -117,51 +121,56 @@ class SoA {
   }
 
   // Returns a pointer to the |ArrayIndex|th array.
-  template <typename ElementType, std::size_t ArrayIndex>
-  ElementType *array() {
+  template <std::size_t ArrayIndex>
+  NthTypeOf<ArrayIndex, Elements...> *array() {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
+    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
     std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
+
     return array->data();
   }
 
   // Returns a const pointer to the |ArrayIndex|th array.
-  template <typename ElementType, std::size_t ArrayIndex>
-  const ElementType *array() const {
+  template <std::size_t ArrayIndex>
+  const NthTypeOf<ArrayIndex, Elements...> *array() const {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
+    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
     const std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
+
     return array->data();
   }
 
-  // Returns a reference to the |index|th element from the |ArrayIndex|th array
-  // as type |ElementType|.
-  template <typename ElementType, std::size_t ArrayIndex>
-  ElementType &get(size_t index) {
+  template <std::size_t ArrayIndex>
+  NthTypeOf<ArrayIndex, Elements...> &get(size_t index) {
     static_assert(ArrayIndex < kNumArrays,
                   "Requested invalid array index in get().");
 
+    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
     std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
+
     return (*array)[index];
   }
 
   // Returns a const reference to the |index|th element from the |ArrayIndex|th
   // array as type |ElementType|.
-  template <typename ElementType, std::size_t ArrayIndex>
-  const ElementType &get(size_t index) const {
+  template <typename std::size_t ArrayIndex>
+  const NthTypeOf<ArrayIndex, Elements...> &get(size_t index) const {
     static_assert(ArrayIndex < kNumArrays,
                   "Requested invalid array index in get().");
 
+    using ElementType = NthTypeOf<ArrayIndex, Elements...>;
     const std::vector<ElementType> *array = get_array<ElementType>(ArrayIndex);
+
     return (*array)[index];
   }
 
   // Returns the number of arrays.
   size_t num_arrays() const { return kNumArrays; }
 
- private:
-  template <class Type>
-  std::vector<Type> *get_array(size_t array_index) {
+private:
+  template <class Type> std::vector<Type> *get_array(size_t array_index) {
     static_assert(sizeof(std::vector<Type>) == sizeof(std::vector<void *>),
                   "Structure of Array assumes of vector<Type> is same size as "
                   "vector<void*> however the assumption failed.");

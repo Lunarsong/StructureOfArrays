@@ -94,24 +94,21 @@ public:
   size_t size() const { return soa_.size(); }
 
   // Returns a pointer to the |ArrayIndex|th array.
-  template <typename ElementType, std::size_t ArrayIndex> ElementType *array() {
-    return soa_.template array<ElementType, ArrayIndex>();
+  template <std::size_t ArrayIndex> auto *array() {
+    return soa_.template array<ArrayIndex>();
   }
 
   // Returns a const pointer to the |ArrayIndex|th array.
-  template <typename ElementType, std::size_t ArrayIndex>
-  const ElementType *array() const {
-    return soa_.template array<ElementType, ArrayIndex>();
+  template <std::size_t ArrayIndex> const auto *array() const {
+    return soa_.template array<ArrayIndex>();
   }
 
-  template <typename ElementType, std::size_t ArrayIndex>
-  ElementType &get(const KeyType &key) {
-    return soa_.template get<ElementType, ArrayIndex>(get_index(key));
+  template <std::size_t ArrayIndex> auto &get(const KeyType &key) {
+    return soa_.template get<ArrayIndex>(get_index(key));
   }
 
-  template <typename ElementType, std::size_t ArrayIndex>
-  const ElementType &get(const KeyType &key) const {
-    return soa_.template get<ElementType, ArrayIndex>(get_index(key));
+  template <std::size_t ArrayIndex> const auto &get(const KeyType &key) const {
+    return soa_.template get<ArrayIndex>(get_index(key));
   }
 
   size_t get_index(const KeyType &key) const {

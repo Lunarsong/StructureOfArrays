@@ -73,15 +73,15 @@ particles.push_back(...);
 #### Accessing elements
 
 ```
-std::cout << "2nd position is: " << particles.Get<vec3, 0>(2) << std::endl;
+std::cout << "2nd position is: " << particles.get<0>(2) << std::endl;
 ```
 
 #### Elements iteration
 
 ```
 for (int i = 0; i < particles.size(); ++i) {
-  std::cout << "Position index: " << i << " is: " << particles.Get<vec3, 0>(i) << std::endl;
-  std::cout << "Velocity index: " << i << " is: " << particles.Get<vec3, 1>(i) << std::endl;
+  std::cout << "Position index: " << i << " is: " << particles.get<0>(i) << std::endl;
+  std::cout << "Velocity index: " << i << " is: " << particles.get<1>(i) << std::endl;
 }
 ```
 
@@ -115,8 +115,8 @@ particles.erase(0, 2);
 Sometimes you may want to access the raw arrays. To do so, use the *array* function.
 
 ```
-vec3* positions = particles.array<vec3, 0>();
-const vec3* velocities = particles.array<vec3, 1>();
+vec3* positions = particles.array<0>();
+const vec3* velocities = particles.array<1>();
 
 for (int i = 0; i < particles.size(); ++i) {
   positions[i] += velocities[i] * delta_time;
