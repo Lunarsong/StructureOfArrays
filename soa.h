@@ -64,7 +64,7 @@ class SoA {
   // Erases elements of a given index from the arrays.
   void erase(size_t element_index) {
     if (element_index >= size()) {
-      assert(true);
+      assert(false);
       return;
     }
 
@@ -79,7 +79,7 @@ class SoA {
   // Erases |num_elements| elements from |start_index| from the arrays.
   void erase(size_t start_index, size_t num_elements) {
     if (start_index >= size() || (start_index + num_elements) > size()) {
-      assert(true);
+      assert(false);
 
       return;
     }
@@ -96,7 +96,7 @@ class SoA {
   // Swaps two elements inside the array.
   void swap(size_t index0, size_t index1) {
     if (index0 >= size() || index1 > size()) {
-      assert(true);
+      assert(false);
 
       return;
     }
