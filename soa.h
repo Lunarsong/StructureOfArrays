@@ -21,7 +21,7 @@ class SoA {
     size_t array_index = 0;
     int dummy_init[] = {(new (get_array<Elements>(array_index))
                              std::vector<Elements>(),
-                         ++array_index++, 0)...};
+                         ++array_index, 0)...};
     (void)dummy_init;  // avoids unused variable compiler warnings.
   }
 
