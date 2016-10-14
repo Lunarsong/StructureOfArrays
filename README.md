@@ -1,10 +1,16 @@
-# StructureOfArrays
+# About
+This repository contains Structure Of Arrays (SoA) and Mapped Structure Of Arrays (MappedSoA).
+
+The Structure of Arrays maintains multiple arrays of different types while maintaining the same size for all the arrays and a shared index for each attribute created throughout its lifetime.
+
+The Mapped Structure of Arrays contains a Structure of Arrays and also defines a key type used to map to indices of attributes within the arrays.
+
+## Structure Of Arrays
 Structure of Arrays (SoA) template in C++.
 
-# Description
 The template simplifies creating structures of arrays.
 
-## Brief explaination about structures of arrays and arrays of structures.
+### Brief explaination about structures of arrays and arrays of structures.
 Structure of Arrays are often used to improve cache efficacy over arrays of structs, for example:
 
 ```
@@ -38,14 +44,14 @@ If each of the particle's properties is accessed without significiant relation t
 
 However this often results in a lot of boilterplate code needed in order to manipulate specific elements in the arrays (this is mostly true *if* you require insertion, removal or specific referencing of elements).
 
-## The SoA template.
+### The SoA template.
 The SoA template simplifies those operations. Declare elements as such:
 
 ```
 SoA<vec3, vec3, vec3, float, vec3, vec3> particles;
 ```
 
-### Reserve / Resize
+#### Reserve / Resize
 
 ```
 // Reserve:
@@ -55,7 +61,7 @@ particles.reserve(1024);
 particles.resize(1024);
 ```
 
-### Adding elements
+#### Adding elements
 
 ```
 particles.push_back(...);
@@ -64,13 +70,13 @@ particles.push_back(...);
 particles.push_back(...);
 ```
 
-### Accessing elements
+#### Accessing elements
 
 ```
 std::cout << "2nd position is: " << particles.Get<vec3, 0>(2) << std::endl;
 ```
 
-### Elements iteration
+#### Elements iteration
 
 ```
 for (int i = 0; i < particles.size(); ++i) {
@@ -79,13 +85,13 @@ for (int i = 0; i < particles.size(); ++i) {
 }
 ```
 
-### Swap elements
+#### Swap elements
 
 ```
 particles.swap(0, 1);
 ```
 
-### Pop back / Erase
+#### Pop back / Erase
 
 Remove end element:
 
@@ -105,7 +111,7 @@ Erase first two elements:
 particles.erase(0, 2);
 ```
 
-### Accessing arrays
+#### Accessing arrays
 Sometimes you may want to access the raw arrays. To do so, use the *array* function.
 
 ```
@@ -116,3 +122,29 @@ for (int i = 0; i < particles.size(); ++i) {
   positions[i] += velocities[i] * delta_time;
 }
 ```
+
+## Mapped Structure Of Arrays
+A mapped Structure of Arrays (MappedSoA) template in C++.
+
+This class allows you maintain structure of arrays with values referenced by a key.
+
+This is useful for all attributes of an object, such as component data belonging to a game entity, while maintaining the different attributes tightly packed in structure of arrays.
+
+For example:
+
+```
+// Some Physics structure.
+using Entity = unsigned int;
+using PositionType = vec3;
+using VelocityType = vec3;
+using MassType = float;
+
+MappedSoA<Entity, PositionType, VelocityType, MassType> physics;
+physics.add(entity, position, velocity, mass);
+// Add more physics entities...
+
+// Remove a specific physics entity.
+physics.remove(entity);
+```
+
+_Note that the map is not guaranteed to maintain the same order in the arrays after calls to remove and pop. Also all operations that modify the array may invalidate the memory address returned by the array() functions._
