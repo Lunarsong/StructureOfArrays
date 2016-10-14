@@ -75,6 +75,10 @@ public:
       return;
     }
 
+    if (index0 == index1) {
+      return;
+    }
+
     const KeyType key0 = index_to_key_[index0];
     const KeyType key1 = index_to_key_[index1];
 
@@ -92,6 +96,8 @@ public:
   void resize(size_t size) { soa_.resize(size); }
 
   size_t size() const { return soa_.size(); }
+
+  bool empty() const { return soa_.empty(); }
 
   // Returns a pointer to the |ArrayIndex|th array.
   template <std::size_t ArrayIndex> auto *array() {
@@ -122,14 +128,7 @@ public:
     return it->second;
   }
 
-  bool has(const KeyType &key) const {
-    const auto it = key_to_index_.find(key);
-    if (it == key_to_index_.end()) {
-      return false;
-    }
-
-    return true;
-  }
+  bool has(const KeyType &key) const { return (key_to_index_.count(key) != 0); }
 
 private:
   using KeyToIndexMap = std::unordered_map<KeyType, size_t>;
