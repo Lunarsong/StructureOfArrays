@@ -44,7 +44,7 @@ public:
 
     const size_t index = index_to_key_.size();
     index_to_key_.push_back(key);
-    soa_.push_back(std::move(elements...));
+    soa_.push(std::forward<Elements>(elements)...);
     key_to_index_[key] = index;
   }
 
@@ -82,11 +82,9 @@ public:
     const KeyType key0 = index_to_key_[index0];
     const KeyType key1 = index_to_key_[index1];
 
-    key_to_index_[key0] = index1;
-    key_to_index_[key1] = index0;
-
-    index_to_key_[index0] = key1;
-    index_to_key_[index1] = key0;
+    using std::swap;
+    swap(key_to_index_[key0], key_to_index_[key1]);
+    swap(index_to_key_[index0], index_to_key_[index1]);
 
     soa_.swap(index0, index1);
   }
@@ -117,10 +115,18 @@ public:
     return soa_.template get<ArrayIndex>(get_index(key));
   }
 
+  template <std::size_t ArrayIndex> auto &at(const size_t &index) {
+    return soa_.template get<ArrayIndex>(index);
+  }
+
+  template <std::size_t ArrayIndex> const auto &at(const size_t &index) const {
+    return soa_.template get<ArrayIndex>(index);
+  }
+
   size_t get_index(const KeyType &key) const {
     const auto it = key_to_index_.find(key);
     if (it == key_to_index_.end()) {
-      assert(true);
+      assert(false);
 
       return -1;
     }

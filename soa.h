@@ -38,8 +38,8 @@ public:
   bool empty() const { return (size_ == 0); }
 
   // Adds an element to the end of the arrays via rvalue.
-  void push_back(Elements &&... elements) {
-    FOR_EACH_ARRAY(push_back(std::forward<Elements>(elements)));
+  void push(Elements &&... elements) {
+    FOR_EACH_ARRAY(emplace_back(std::forward<Elements>(elements)));
 
     // Increment number of elements in the arrays.
     ++size_;
@@ -125,8 +125,7 @@ public:
   }
 
   // Returns a pointer to the |ArrayIndex|th array.
-  template <std::size_t ArrayIndex>
-  NthTypeOf<ArrayIndex> *array() {
+  template <std::size_t ArrayIndex> NthTypeOf<ArrayIndex> *array() {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
     using ElementType = NthTypeOf<ArrayIndex>;
@@ -136,8 +135,7 @@ public:
   }
 
   // Returns a const pointer to the |ArrayIndex|th array.
-  template <std::size_t ArrayIndex>
-  const NthTypeOf<ArrayIndex> *array() const {
+  template <std::size_t ArrayIndex> const NthTypeOf<ArrayIndex> *array() const {
     static_assert(ArrayIndex < kNumArrays, "Requested invalid array index.");
 
     using ElementType = NthTypeOf<ArrayIndex>;
@@ -146,8 +144,7 @@ public:
     return array->data();
   }
 
-  template <std::size_t ArrayIndex>
-  NthTypeOf<ArrayIndex> &get(size_t index) {
+  template <std::size_t ArrayIndex> NthTypeOf<ArrayIndex> &get(size_t index) {
     static_assert(ArrayIndex < kNumArrays,
                   "Requested invalid array index in get().");
 
