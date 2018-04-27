@@ -3,6 +3,18 @@
 
 #include <soa.h>
 
+class TestClass {
+ public:
+  TestClass(int value = 0) : value_(value) {
+    std::cout << "TestClass created with value: " << value_ << "! :)\n";
+  }
+  ~TestClass() {
+    std::cout << "TestClass deleted... value: " << value_ << ":(\n";
+  }
+
+  int value_ = 0;
+};
+
 void print_soa_iis(const SoA<int, std::string, int>& soa_iis) {
   for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "(" << i << "): " << soa_iis.get<0>(i) << ", \""
@@ -96,4 +108,8 @@ int main() {
     std::cout << strings[i] << "\", ";
     std::cout << ints1[i] << std::endl;
   }
+
+  SoA<int, std::string, TestClass> soa_iit;
+  soa_iit.push_back(4, "Hello!", 7);
+  soa_iit.push_back(2, "World?", 42);
 }
