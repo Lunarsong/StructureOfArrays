@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
 
-#include "soa.h"
+#include <soa.h>
 
 void print_soa_iis(const SoA<int, std::string, int> &soa_iis) {
   for (int i = 0; i < soa_iis.size(); ++i) {
-    std::cout << "(" << i << "): " << soa_iis.get<int, 0>(i) << ", "
-              << soa_iis.get<std::string, 1>(i) << ", "
-              << soa_iis.get<int, 2>(i) << std::endl;
+    std::cout << "(" << i << "): " << soa_iis.get<0>(i) << ", \""
+              << soa_iis.get<1>(i) << "\", "
+              << soa_iis.get<2>(i) << std::endl;
   }
 }
 
@@ -35,7 +35,7 @@ int main() {
   std::cout << std::endl;
 
   // Modify an element
-  soa_iis.get<std::string, 1>(0) = "I am changed!";
+  soa_iis.get<1>(0) = "I am changed!";
   std::cout << "Modified the 0th element. Arrays now contain:\n";
   print_soa_iis(soa_iis);
   std::cout << std::endl;
@@ -75,9 +75,9 @@ int main() {
   std::cout << std::endl;
 
   // Modify an element and insert an element.
-  soa_iis.get<std::string, 1>(3) = "Oh hai!";
-  soa_iis.get<int, 2>(3) = 11;
-  soa_iis.get<int, 0>(3) = 22;
+  soa_iis.get<1>(3) = "Oh hai!";
+  soa_iis.get<2>(3) = 11;
+  soa_iis.get<0>(3) = 22;
   soa_iis.push_back(100, "I'm new!.", 20);
   std::cout
       << "Modified the 4th element and added a new one. Arrays now contain:\n";
@@ -88,13 +88,13 @@ int main() {
 
   // Get arrays and print them.
   std::cout << "Printing arrays individually:\n";
-  int *ints0 = soa_iis.array<int, 0>();
-  std::string *strings = soa_iis.array<std::string, 1>();
-  int *ints1 = soa_iis.array<int, 2>();
+  int *ints0 = soa_iis.array<0>();
+  std::string *strings = soa_iis.array<1>();
+  int *ints1 = soa_iis.array<2>();
   for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "Index: " << i << ": ";
-    std::cout << ints0[i] << ", ";
-    std::cout << strings[i] << ", ";
+    std::cout << ints0[i] << ", \"";
+    std::cout << strings[i] << "\", ";
     std::cout << ints1[i] << std::endl;
   }
 }
