@@ -47,7 +47,7 @@ class SoA {
 
   virtual ~SoA() {
     using std::vector;
-    FOR_EACH_ARRAY(~vector<Elements>());
+    FOR_EACH_ARRAY(~vector());
   }
 
   SoA& operator=(const SoA& other) {
