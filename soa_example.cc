@@ -3,11 +3,10 @@
 
 #include <soa.h>
 
-void print_soa_iis(const SoA<int, std::string, int> &soa_iis) {
+void print_soa_iis(const SoA<int, std::string, int>& soa_iis) {
   for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "(" << i << "): " << soa_iis.get<0>(i) << ", \""
-              << soa_iis.get<1>(i) << "\", "
-              << soa_iis.get<2>(i) << std::endl;
+              << soa_iis.get<1>(i) << "\", " << soa_iis.get<2>(i) << std::endl;
   }
 }
 
@@ -88,9 +87,9 @@ int main() {
 
   // Get arrays and print them.
   std::cout << "Printing arrays individually:\n";
-  int *ints0 = soa_iis.array<0>();
-  std::string *strings = soa_iis.array<1>();
-  int *ints1 = soa_iis.array<2>();
+  int* ints0 = soa_iis.array<0>();
+  std::string* strings = soa_iis.array<1>();
+  int* ints1 = soa_iis.array<2>();
   for (int i = 0; i < soa_iis.size(); ++i) {
     std::cout << "Index: " << i << ": ";
     std::cout << ints0[i] << ", \"";
