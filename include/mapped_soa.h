@@ -85,6 +85,10 @@ class MappedSoA {
     key_to_index_.erase(key);
   }
 
+  void copy(size_t index_from, size_t index_to) {
+    soa_.copy(index_from, index_to);
+  }
+
   void swap(size_t index0, size_t index1) {
     const size_t size_val = size();
     if (size_val <= index0 || size_val <= index1) {

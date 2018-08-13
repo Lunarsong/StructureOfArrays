@@ -147,6 +147,23 @@ class SoA {
     size_ -= num_elements;
   }
 
+  // Copies an element into another element inside the array.
+  void copy(size_t index_from, size_t index_to) {
+    if (index_from >= size() || index_to >= size()) {
+      assert(false);
+
+      return;
+    }
+
+    if (index_from == index_to) {
+      return;
+    }
+
+    size_t array_index = 0;
+    int dummy[] = {(copy_impl<Elements>(index_from, index_to, array_index++), 0)...};
+    (void)dummy;
+  }
+
   // Swaps two elements inside the array.
   void swap(size_t index0, size_t index1) {
     if (index0 >= size() || index1 >= size()) {
@@ -262,6 +279,13 @@ class SoA {
 
     array->erase(array->begin() + element_index,
                  array->begin() + element_index + num_elements);
+  }
+
+  template <class Type>
+  void copy_impl(size_t index_from, size_t index_to, size_t array_index) {
+    std::vector<Type>* array = get_array<Type>(array_index);
+
+    (*array)[index_to] = (*array)[index_from];
   }
 
   template <class Type>
